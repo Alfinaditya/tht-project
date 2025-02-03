@@ -6,10 +6,11 @@ export enum QueryKeys {
 	BANNER = 'banner',
 }
 
-export const useService = () =>
+export const useService = ({ enabled = true }: { enabled?: boolean } = {}) =>
 	useQuery({
 		queryKey: [QueryKeys.SERVICE],
 		queryFn: () => service(),
+		enabled: enabled,
 	});
 
 export const useBanner = () =>

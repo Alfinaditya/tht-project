@@ -5,6 +5,7 @@ import HomePage from './pages/home';
 import EntryLayout from './pages/layout/entry';
 import RegisterPage from './pages/register';
 import TopUpPage from './pages/top-up';
+import ServiceDetails from './pages/service-details';
 
 const Router = () => {
 	const router = createBrowserRouter([
@@ -16,6 +17,10 @@ const Router = () => {
 				{
 					index: true,
 					element: <HomePage />,
+				},
+				{
+					path: 'service/:id',
+					element: <ServiceDetails />,
 				},
 				{
 					path: 'top-up',

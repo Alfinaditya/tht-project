@@ -10,6 +10,9 @@ const DashboardLayout = () => {
 		<div>
 			<ul>
 				<li>
+					<NavLink to="/">Home</NavLink>
+				</li>
+				<li>
 					<NavLink
 						to="/top-up"
 						className={({ isActive }) => cn(isActive && 'text-red-500')}
