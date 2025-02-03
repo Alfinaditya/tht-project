@@ -16,8 +16,10 @@ import axios from 'axios';
 import { ExceptionResponse } from '@/api/types';
 import { useState } from 'react';
 import Cookies from 'js-cookie';
+import { Link, useNavigate } from 'react-router-dom';
 
 const LoginPage = () => {
+	const navigate = useNavigate();
 	const [customErrorMessage, setCustomErrorMessage] = useState('');
 	const {
 		mutateAsync: loginMutateAsync,
@@ -33,17 +35,16 @@ const LoginPage = () => {
 	});
 
 	const onSubmit = async (data: LoginInput) => {
-		console.log(data);
 		try {
 			const res = await loginMutateAsync({
 				email: data.email,
 				password: data.password,
 			});
 			Cookies.set('sid', res.data.data.token);
+			navigate('/');
 		} catch (error: any) {
 			if (axios.isAxiosError(error)) {
 				const err: ExceptionResponse = error;
-				console.log(err.response?.data.message);
 				setCustomErrorMessage(err.response?.data.message as string);
 				return;
 			}
@@ -59,7 +60,6 @@ const LoginPage = () => {
 						name="email"
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>Email</FormLabel>
 								<FormControl>
 									<Input
 										maxLength={255}
@@ -77,7 +77,6 @@ const LoginPage = () => {
 						name="password"
 						render={({ field }) => (
 							<FormItem>
-								<FormLabel>Password</FormLabel>
 								<FormControl>
 									<Input
 										maxLength={255}
@@ -95,6 +94,7 @@ const LoginPage = () => {
 					</Button>
 				</form>
 			</Form>
+			<Link to="/register">Register</Link>
 		</div>
 	);
 };

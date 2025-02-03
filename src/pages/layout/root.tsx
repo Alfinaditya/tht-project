@@ -1,8 +1,10 @@
+import { getAuthToken } from '@/lib/utils';
 import { Outlet } from 'react-router-dom';
 
 const RootLayout = () => {
 	return (
-		<div className="mt-10">
+		<div>
+			<h1>Root Layout</h1>
 			<Outlet />
 		</div>
 	);
