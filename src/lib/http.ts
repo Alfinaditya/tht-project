@@ -38,6 +38,7 @@ http.interceptors.response.use(
 
 		if (statusCode === HttpStatusCode.Unauthorized) {
 			Cookies.remove('sid');
+			window.location.replace('/login');
 		}
 
 		if (statusCode === HttpStatusCode.Forbidden) {

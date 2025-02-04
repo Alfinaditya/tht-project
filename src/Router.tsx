@@ -6,6 +6,8 @@ import EntryLayout from './pages/layout/entry';
 import RegisterPage from './pages/register';
 import TopUpPage from './pages/top-up';
 import ServiceDetails from './pages/service-details';
+import TransactionPage from './pages/transaction';
+import AccountPage from './pages/account';
 
 const Router = () => {
 	const router = createBrowserRouter([
@@ -25,6 +27,14 @@ const Router = () => {
 				{
 					path: 'top-up',
 					element: <TopUpPage />,
+				},
+				{
+					path: 'transaction',
+					element: <TransactionPage />,
+				},
+				{
+					path: 'account',
+					element: <AccountPage />,
 				},
 			],
 		},

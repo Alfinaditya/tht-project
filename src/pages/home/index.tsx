@@ -1,8 +1,6 @@
 import { useBanner, useService } from '@/api/information/queries';
 import { BalanceCard } from '@/components/balance-card';
-import { Button } from '@/components/ui/button';
 import { WelcomeProfile } from '@/components/welcome-profile';
-import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 
 const HomePage = () => {
@@ -11,7 +9,6 @@ const HomePage = () => {
 	const navigate = useNavigate();
 	return (
 		<div>
-			<Button onClick={() => Cookies.remove('sid')}>Logout</Button>
 			<WelcomeProfile />
 			<BalanceCard />
 			{services && (

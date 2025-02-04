@@ -60,3 +60,28 @@ export function toRupiahFormat(value: number): string {
 		minimumFractionDigits: 0,
 	}).format(value);
 }
+
+/**
+ * Converts a Blob into a Base64-encoded data URL string.
+ *
+ * This function reads the provided Blob and returns a Base64-encoded string,
+ * making it useful for handling file uploads, previews, or storage in a format
+ * compatible with HTML and JavaScript.
+ *
+ * @param content - The Blob to be encoded.
+ * @returns A Promise that resolves to a Base64-encoded string or `null` if encoding fails.
+ *
+ * @example
+ * ```typescript
+ * const file = new Blob(["Hello, world!"], { type: "text/plain" });
+ * const base64String = await encodedContent(file);
+ * console.log(base64String); // "data:text/plain;base64,SGVsbG8sIHdvcmxkIQ=="
+ * ```
+ */
+export async function encodedContent(content: Blob): Promise<string | null> {
+	return new Promise((resolve) => {
+		const reader = new FileReader();
+		reader.onloadend = () => resolve((reader.result as string) || null);
+		reader.readAsDataURL(content);
+	});
+}

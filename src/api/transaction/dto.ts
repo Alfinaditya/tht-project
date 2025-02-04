@@ -15,4 +15,12 @@ export const TopUpSchema = z.object({
 });
 
 export type TopUpInput = z.infer<typeof TopUpSchema>;
-export type PaidTransactionInput = { service_code: string };
+
+export interface PaidTransactionInput {
+	service_code: string;
+}
+
+export interface TransactionHistoryInput {
+	offset: number;
+	limit: number;
+}

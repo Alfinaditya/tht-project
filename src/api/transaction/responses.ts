@@ -10,3 +10,15 @@ export type PaidTransactionResponse = Response<{
 	total_amount: number;
 	created_on: string;
 }>;
+
+export type TransactionHistoryResponse = Response<{
+	offset: number;
+	limit: number;
+	records: Array<{
+		invoice_number: string;
+		transaction_type: string;
+		description: string;
+		total_amount: number;
+		created_on: string;
+	}>;
+}>;
