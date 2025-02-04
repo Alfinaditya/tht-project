@@ -6,8 +6,11 @@ const EntryLayout = () => {
 		return <Navigate to="/" replace />;
 	}
 	return (
-		<div>
-			EntryLayout <Outlet />
+		<div className="flex items-center h-screen">
+			<div className="w-full">
+				<Outlet />
+			</div>
+			<img src="/assets/entry-img.png" alt="Entry Image" className="h-full" />
 		</div>
 	);
 };

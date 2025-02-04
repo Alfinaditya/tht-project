@@ -6,6 +6,8 @@ type CurrencyInputProps = Omit<
 	'onChange'
 > & {
 	onChange?: (value: string) => void;
+	startAdornment?: JSX.Element;
+	endAdornment?: JSX.Element;
 };
 
 const formatNumber = (value: string) => {

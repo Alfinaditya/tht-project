@@ -1,7 +1,7 @@
 import { RegisterInput, RegisterSchema } from '@/api/entry/dto';
 import { useRegisterMutation } from '@/api/entry/mutations';
 import { zodResolver } from '@hookform/resolvers/zod';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import {
 	Form,
@@ -15,8 +15,11 @@ import { Button } from '@/components/ui/button';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ExceptionResponse } from '@/api/types';
+import { AtSign, Eye, EyeOff, LockKeyhole, User } from 'lucide-react';
 
 const RegisterPage = () => {
+	const [isShowPassword, setIsShowPassword] = useState(false);
+	const [isShowConfirmPassword, setIsShowConfirmPassword] = useState(false);
 	const [customErrorMessage, setCustomErrorMessage] = useState('');
 	const navigate = useNavigate();
 	const {
@@ -55,101 +58,147 @@ const RegisterPage = () => {
 		}
 	};
 	return (
-		<div>
-			{isError && <p>{customErrorMessage}</p>}
-			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-					<FormField
-						control={form.control}
-						name="email"
-						render={({ field }) => (
-							<FormItem>
-								<FormControl>
-									<Input
-										maxLength={255}
-										type="email"
-										placeholder="Masukan email anda"
-										{...field}
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name="first_name"
-						render={({ field }) => (
-							<FormItem>
-								<FormControl>
-									<Input
-										maxLength={255}
-										type="text"
-										placeholder="Nama depan"
-										{...field}
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name="last_name"
-						render={({ field }) => (
-							<FormItem>
-								<FormControl>
-									<Input
-										maxLength={255}
-										type="text"
-										placeholder="Nama belakang"
-										{...field}
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name="password"
-						render={({ field }) => (
-							<FormItem>
-								<FormControl>
-									<Input
-										maxLength={255}
-										type="password"
-										placeholder="Buat password"
-										{...field}
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name="password_confirmation"
-						render={({ field }) => (
-							<FormItem>
-								<FormControl>
-									<Input
-										maxLength={255}
-										type="password"
-										placeholder="Konirmasi password"
-										{...field}
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<Button disabled={isPending} type="submit">
-						Registrasi
+		<div className="flex-col flex gap-y-20 w-[50%] m-auto">
+			<div className="text-center m-auto">
+				<Link
+					to="/"
+					className="flex items-center justify-center gap-x-2 font-bold text-center text-2xl mb-10"
+				>
+					<img src="/assets/brand.png" alt="Brand" />
+					SIMS PPOB
+				</Link>
+				<h1 className="text-3xl font-semibold">
+					Lengkapi data untuk membuat akun
+				</h1>
+			</div>
+			<div>
+				<Form {...form}>
+					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+						<FormField
+							control={form.control}
+							name="email"
+							render={({ field }) => (
+								<FormItem>
+									<FormControl>
+										<Input
+											type="email"
+											placeholder="Masukan email anda"
+											startAdornment={<AtSign className="w-4" />}
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="first_name"
+							render={({ field }) => (
+								<FormItem>
+									<FormControl>
+										<Input
+											type="text"
+											placeholder="Nama depan"
+											startAdornment={<User className="w-4" />}
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="last_name"
+							render={({ field }) => (
+								<FormItem>
+									<FormControl>
+										<Input
+											type="text"
+											placeholder="Nama belakang"
+											startAdornment={<User className="w-4" />}
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="password"
+							render={({ field }) => (
+								<FormItem>
+									<FormControl>
+										<Input
+											maxLength={255}
+											placeholder="Buat password"
+											type={isShowPassword ? 'text' : 'password'}
+											startAdornment={<LockKeyhole className="w-4" />}
+											endAdornment={
+												isShowPassword ? (
+													<EyeOff
+														onClick={() => setIsShowPassword(false)}
+														className="w-4 cursor-pointer"
+													/>
+												) : (
+													<Eye
+														onClick={() => setIsShowPassword(true)}
+														className="w-4 cursor-pointer"
+													/>
+												)
+											}
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="password_confirmation"
+							render={({ field }) => (
+								<FormItem>
+									<FormControl>
+										<Input
+											maxLength={255}
+											placeholder="Konirmasi password"
+											type={isShowConfirmPassword ? 'text' : 'password'}
+											startAdornment={<LockKeyhole className="w-4" />}
+											endAdornment={
+												isShowConfirmPassword ? (
+													<EyeOff
+														onClick={() => setIsShowConfirmPassword(false)}
+														className="w-4 cursor-pointer"
+													/>
+												) : (
+													<Eye
+														onClick={() => setIsShowConfirmPassword(true)}
+														className="w-4 cursor-pointer"
+													/>
+												)
+											}
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<Button isLoading={isPending} type="submit" className="w-full">
+							Registrasi
+						</Button>
+					</form>
+				</Form>
+				<p className="text-gray-400 text-sm text-center">
+					Sudah punya akun ? login{' '}
+					<Button className="font-semibold p-0" variant="link" asChild>
+						<Link to="/login">di sini</Link>
 					</Button>
-				</form>
-			</Form>
-			<Link to="/login">Login</Link>
+				</p>
+			</div>
 		</div>
 	);
 };

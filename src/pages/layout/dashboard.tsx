@@ -1,44 +1,59 @@
+import { Button } from '@/components/ui/button';
 import { cn, getAuthToken } from '@/lib/utils';
-import { Navigate, NavLink, Outlet } from 'react-router-dom';
-
+import { Link, Navigate, NavLink, Outlet, useLocation } from 'react-router-dom';
+const LINKS = [
+	{
+		id: crypto.randomUUID(),
+		label: 'Top Up',
+		href: '/top-up',
+	},
+	{
+		id: crypto.randomUUID(),
+		label: 'Transaction',
+		href: '/transaction',
+	},
+	{
+		id: crypto.randomUUID(),
+		label: 'Akun',
+		href: '/account',
+	},
+];
 const DashboardLayout = () => {
+	let location = useLocation();
 	if (!getAuthToken()) {
 		return <Navigate to="/login" replace />;
 	}
 
 	return (
-		<div>
-			<ul>
-				<li>
-					<NavLink to="/">Home</NavLink>
-				</li>
-				<li>
-					<NavLink
-						to="/top-up"
-						className={({ isActive }) => cn(isActive && 'text-red-500')}
-					>
-						Top Up
-					</NavLink>
-				</li>
-				<li>
-					<NavLink
-						to="/transaction"
-						className={({ isActive }) => cn(isActive && 'text-red-500')}
-					>
-						Transaction
-					</NavLink>
-				</li>
-				<li>
-					<NavLink
-						to="/account"
-						className={({ isActive }) => cn(isActive && 'text-red-500')}
-					>
-						Akun
-					</NavLink>
-				</li>
-			</ul>
+		<>
+			<nav className="shadow-sm p-5 mb-10">
+				<ul className="flex items-center">
+					<li className="flex-1">
+						<Link to="/" className="flex items-center gap-x-2 font-bold">
+							<img src="/assets/brand.png" alt="Brand" />
+							SIMS PPOB
+						</Link>
+					</li>
+					{LINKS.map((link) => (
+						<li key={link.id}>
+							<Button
+								variant="link"
+								className={cn(
+									'font-semibold',
+									link.href === location.pathname
+										? 'text-red-500'
+										: 'text-black'
+								)}
+								asChild
+							>
+								<Link to={link.href}>{link.label}</Link>
+							</Button>
+						</li>
+					))}
+				</ul>
+			</nav>
 			<Outlet />
-		</div>
+		</>
 	);
 };
 

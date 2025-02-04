@@ -16,10 +16,12 @@ import { ExceptionResponse } from '@/api/types';
 import { useState } from 'react';
 import Cookies from 'js-cookie';
 import { Link, useNavigate } from 'react-router-dom';
+import { Eye, EyeOff, LockKeyhole, User } from 'lucide-react';
 
 const LoginPage = () => {
 	const navigate = useNavigate();
 	const [customErrorMessage, setCustomErrorMessage] = useState('');
+	const [isShowPassword, setIsShowPassword] = useState(false);
 	const {
 		mutateAsync: loginMutateAsync,
 		isPending,
@@ -50,50 +52,83 @@ const LoginPage = () => {
 		}
 	};
 	return (
-		<div>
-			{isError && <p>{customErrorMessage}</p>}
-			<Form {...form}>
-				<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-					<FormField
-						control={form.control}
-						name="email"
-						render={({ field }) => (
-							<FormItem>
-								<FormControl>
-									<Input
-										maxLength={255}
-										type="email"
-										placeholder="Masukan email anda"
-										{...field}
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<FormField
-						control={form.control}
-						name="password"
-						render={({ field }) => (
-							<FormItem>
-								<FormControl>
-									<Input
-										maxLength={255}
-										type="password"
-										placeholder="Masukan password anda"
-										{...field}
-									/>
-								</FormControl>
-								<FormMessage />
-							</FormItem>
-						)}
-					/>
-					<Button disabled={isPending} type="submit">
-						Masuk
+		<div className="flex-col flex gap-y-20 w-[50%] m-auto">
+			{/* {isError && <p>{customErrorMessage}</p>} */}
+			<div className="text-center m-auto">
+				<Link
+					to="/"
+					className="flex items-center justify-center gap-x-2 font-bold text-center text-2xl mb-10"
+				>
+					<img src="/assets/brand.png" alt="Brand" />
+					SIMS PPOB
+				</Link>
+				<h1 className="text-3xl font-semibold">
+					Masuk atau buat akun untuk memulai
+				</h1>
+			</div>
+
+			<div>
+				<Form {...form}>
+					<form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+						<FormField
+							control={form.control}
+							name="email"
+							render={({ field }) => (
+								<FormItem>
+									<FormControl>
+										<Input
+											type="email"
+											placeholder="Masukan email anda"
+											startAdornment={<User className="w-4" />}
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<FormField
+							control={form.control}
+							name="password"
+							render={({ field }) => (
+								<FormItem>
+									<FormControl>
+										<Input
+											type={isShowPassword ? 'text' : 'password'}
+											startAdornment={<LockKeyhole className="w-4" />}
+											endAdornment={
+												isShowPassword ? (
+													<EyeOff
+														onClick={() => setIsShowPassword(false)}
+														className="w-4 cursor-pointer"
+													/>
+												) : (
+													<Eye
+														onClick={() => setIsShowPassword(true)}
+														className="w-4 cursor-pointer"
+													/>
+												)
+											}
+											placeholder="Masukan password anda"
+											{...field}
+										/>
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
+						<Button isLoading={isPending} className="w-full" type="submit">
+							Masuk
+						</Button>
+					</form>
+				</Form>
+				<p className="text-gray-400 text-sm text-center">
+					Belum punya akun ? registrasi{' '}
+					<Button className="font-semibold p-0" variant="link" asChild>
+						<Link to="/register">di sini</Link>
 					</Button>
-				</form>
-			</Form>
-			<Link to="/register">Register</Link>
+				</p>
+			</div>
 		</div>
 	);
 };

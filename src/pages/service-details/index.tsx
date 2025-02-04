@@ -1,65 +1,62 @@
 import { useService } from '@/api/information/queries';
-import { usePaidTransactionMutation } from '@/api/transaction/mutations';
-import { ExceptionResponse } from '@/api/types';
 import { BalanceCard } from '@/components/balance-card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { WelcomeProfile } from '@/components/welcome-profile';
-import axios from 'axios';
+import { toRupiahFormat } from '@/lib/utils';
+import { Banknote } from 'lucide-react';
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
+import ConfirmPaidTransactionModal from './components/confirm-paid-transaction-modal';
 
 const ServiceDetails = () => {
 	let { id } = useParams();
-	const [customErrorMessage, setCustomErrorMessage] = useState('');
-	const {
-		isLoading: isServiceLoading,
-		data: services,
-		isError,
-	} = useService({
+	const [openConfirmModal, setOpenConfirmModal] = useState(false);
+	const { isLoading: isServiceLoading, data: services } = useService({
 		enabled: !!id,
 	});
-	const { mutateAsync: paidTransactionMutateAsync } =
-		usePaidTransactionMutation();
 	const selectedService =
 		services &&
 		services.data.data.find((service) => service.service_code === id);
 
-	const handleSubmit = async () => {
-		if (!selectedService) return;
-		try {
-			await paidTransactionMutateAsync({
-				service_code: selectedService.service_code,
-			});
-		} catch (error: any) {
-			if (axios.isAxiosError(error)) {
-				const err: ExceptionResponse = error;
-				setCustomErrorMessage(err.response?.data.message as string);
-				return;
-			}
-		}
-		// try {
-
-		// await paidTransactionMutateAsync({
-		// 	service_code: selectedService.service_code,
-		// });
-		// } catch (error) {
-
-		// }
-	};
 	return (
-		<div>
-			<WelcomeProfile />
-			<BalanceCard />
-			{isError && <p>{customErrorMessage}</p>}
-			<h1>Service Details</h1>
-			{JSON.stringify(selectedService)}
+		<div className="w-[90%] m-auto ">
+			<div className="flex mb-10">
+				<WelcomeProfile className="w-1/2" />
+				<BalanceCard className="w-1/2" />
+			</div>
+			<p>Pembayaran</p>
 			{selectedService && (
-				<Input defaultValue={selectedService.service_tariff} readOnly />
+				<>
+					<div className="mt-4 mb-10">
+						<div className="flex items-center gap-x-2">
+							<img
+								src={selectedService.service_icon}
+								className="w-10 h-10"
+								alt=""
+							/>
+							<p className="font-bold">{selectedService.service_name}</p>
+						</div>
+					</div>
+					<Input
+						defaultValue={toRupiahFormat(selectedService.service_tariff)}
+						startAdornment={<Banknote className="w-4" />}
+						readOnly
+					/>
+					<Button
+						className="w-full mt-5"
+						disabled={isServiceLoading}
+						onClick={() => setOpenConfirmModal(true)}
+					>
+						Bayar
+					</Button>
+					<ConfirmPaidTransactionModal
+						open={openConfirmModal}
+						setOpenModal={setOpenConfirmModal}
+						selectedService={selectedService}
+					/>
+				</>
 			)}
-			<Button disabled={isServiceLoading} onClick={handleSubmit}>
-				Bayar
-			</Button>
 		</div>
 	);
 };
