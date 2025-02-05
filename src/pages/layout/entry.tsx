@@ -7,10 +7,17 @@ const EntryLayout = () => {
 	}
 	return (
 		<div className="flex items-center h-screen">
-			<div className="w-full">
+			<div className="w-full h-full">
 				<Outlet />
 			</div>
-			<img src="/assets/entry-img.png" alt="Entry Image" className="h-full" />
+			<div className="w-full h-full">
+				<img
+					src="/assets/entry-img.png"
+					alt="Entry Image"
+					className="h-full w-full"
+					loading="eager"
+				/>
+			</div>
 		</div>
 	);
 };

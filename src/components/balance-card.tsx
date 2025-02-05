@@ -1,9 +1,10 @@
-import { Card, CardContent } from './ui/card';
+import { Card } from './ui/card';
 import { useBalance } from '@/api/transaction/queries';
 import { Button } from './ui/button';
 import { cn, toRupiahFormat } from '@/lib/utils';
 import React from 'react';
 import { Eye } from 'lucide-react';
+import { Skeleton } from './ui/skeleton';
 
 const BalanceCard = React.forwardRef<
 	HTMLDivElement,
@@ -17,23 +18,33 @@ const BalanceCard = React.forwardRef<
 			className={cn('bg-primary text-white p-5', className)}
 			{...props}
 		>
-			<p>Saldo anda</p>
-			{balance && (
-				<p className="text-5xl my-4">
-					{showBalance
-						? toRupiahFormat(balance.data.data.balance)
-						: '• • • • •'}
-				</p>
+			{isBalanceLoading ? (
+				<div className="flex flex-col justify-between h-full">
+					<Skeleton className="w-[20%] h-[24px] bg-secondary" />
+					<Skeleton className="w-[50%] h-[48px] my-4 bg-secondary" />
+					<Skeleton className="w-[25%] h-[40px] bg-secondary" />
+				</div>
+			) : (
+				<>
+					<p>Saldo anda</p>
+					{balance && (
+						<p className="text-5xl my-4">
+							{showBalance
+								? toRupiahFormat(balance.data.data.balance)
+								: '• • • • •'}
+						</p>
+					)}
+					<Button
+						variant="link"
+						onClick={() =>
+							!isBalanceLoading && setShowBalance((showBalance) => !showBalance)
+						}
+						className="text-white px-0"
+					>
+						{showBalance ? 'Tutup' : 'Lihat'} Saldo <Eye />
+					</Button>
+				</>
 			)}
-			<Button
-				variant="link"
-				onClick={() =>
-					!isBalanceLoading && setShowBalance((showBalance) => !showBalance)
-				}
-				className="text-white px-0"
-			>
-				{showBalance ? 'Tutup' : 'Lihat'} Saldo <Eye />
-			</Button>
 		</Card>
 	);
 });

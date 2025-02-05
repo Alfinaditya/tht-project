@@ -1,4 +1,3 @@
-import { getAuthToken } from '@/lib/utils';
 import { Outlet } from 'react-router-dom';
 
 const RootLayout = () => {

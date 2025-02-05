@@ -52,7 +52,9 @@ const DashboardLayout = () => {
 					))}
 				</ul>
 			</nav>
-			<Outlet />
+			<div className="p-10">
+				<Outlet />
+			</div>
 		</>
 	);
 };
