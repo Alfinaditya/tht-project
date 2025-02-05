@@ -62,7 +62,9 @@ const RegisterPage = () => {
 						to="/"
 						className="flex items-center justify-center gap-x-2 font-bold text-center text-2xl mb-10"
 					>
-						<img src="/assets/brand.png" alt="Brand" />
+						<div className="w-[32px] h-[32px] rounded-full">
+							<img src="/assets/brand.png" alt="Brand" />
+						</div>
 						SIMS PPOB
 					</Link>
 					<h1 className="text-3xl font-semibold">

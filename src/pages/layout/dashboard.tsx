@@ -32,7 +32,9 @@ const DashboardLayout = () => {
 				<ul className="flex items-center">
 					<li className="flex-1">
 						<Link to="/" className="flex items-center gap-x-2 font-bold">
-							<img src="/assets/brand.png" alt="Brand" />
+							<div className="w-[32px] h-[32px] rounded-full">
+								<img src="/assets/brand.png" alt="Brand" />
+							</div>
 							SIMS PPOB
 						</Link>
 					</li>
