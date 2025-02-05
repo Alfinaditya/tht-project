@@ -9,16 +9,15 @@ import {
 import Cookies from 'js-cookie';
 import { AtSign, User } from 'lucide-react';
 import { Label } from '@/components/ui/label';
-import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { UpdateProfileInput, UpdateProfileSchema } from '@/api/profile/dto';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useUpdateProfileMutation } from '@/store/profile/slice';
 import { ProfileResponse } from '@/store/profile/response';
+import { UpdateProfileInput, UpdateProfileSchema } from '@/store/profile/dto';
 
 interface Props {
 	profile: ProfileResponse;
@@ -28,7 +27,6 @@ const EditProfileSection: React.FC<Props> = ({ profile }) => {
 	const { toast } = useToast();
 	const [isUpdateProfile, setIsUpdateProfile] = useState(false);
 	const [updateProfileMutaton, { isLoading }] = useUpdateProfileMutation();
-	const navigate = useNavigate();
 
 	const form = useForm<UpdateProfileInput>({
 		resolver: zodResolver(UpdateProfileSchema),
@@ -144,7 +142,7 @@ const EditProfileSection: React.FC<Props> = ({ profile }) => {
 							type="button"
 							onClick={() => {
 								Cookies.remove('sid');
-								navigate('/login');
+								window.location.replace('/login');
 							}}
 						>
 							Logout

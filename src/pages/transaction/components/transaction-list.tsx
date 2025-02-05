@@ -5,7 +5,7 @@ import {
 	TRANSACTION_HISTORY_PAGE,
 	useGetTransactionHistoryQuery,
 } from '@/store/transaction/slice';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { format } from 'date-fns';
 import { cn, toRupiahFormat } from '@/lib/utils';
@@ -14,37 +14,29 @@ import { TransactionHistoryResponse } from '@/store/transaction/response';
 
 const TransactionList = () => {
 	const [offset, setOffset] = useState(0);
-	const [hasNextPage, setHasNextPage] = useState(true);
-	const [transactionHistories, setTransactionHistories] =
-		useState<TransactionHistoryResponse>();
-	const {
-		data: nextData,
-		isLoading,
-		isFetching,
-	} = useGetTransactionHistoryQuery({ offset });
 
-	useEffect(() => {
-		if (nextData) {
-			if (nextData.data.records.length < TRANSACTION_HISTORY_PAGE) {
-				setHasNextPage(false);
-			}
-			if (nextData.data.records.length > 0) {
-				setTransactionHistories({
-					...nextData,
-					data: {
-						limit: nextData.data.limit,
-						offset: nextData.data.offset,
-						records: [
-							...(transactionHistories
-								? transactionHistories.data.records
-								: []),
-							...nextData.data.records,
-						],
-					},
-				});
-			}
+	const { data, isLoading, isFetching } = useGetTransactionHistoryQuery(
+		{ offset },
+		{
+			selectFromResult: (result) => ({
+				...result,
+				data: result.data
+					? {
+							...result.data,
+							data: {
+								...result.data?.data,
+								has_next_page:
+									Number(result.data?.data.offset) === 0
+										? Number(result.data?.data.records.length) ===
+										  Number(TRANSACTION_HISTORY_PAGE)
+										: Boolean(result.data?.data.has_next_page),
+							},
+					  }
+					: undefined,
+			}),
 		}
-	}, [nextData]);
+	);
+	const transactionHistories = data as TransactionHistoryResponse;
 
 	return (
 		<>
@@ -53,7 +45,8 @@ const TransactionList = () => {
 					<TransactionListSkeleton />
 				) : (
 					<>
-						{transactionHistories ? (
+						{transactionHistories &&
+						transactionHistories.data.records.length > 0 ? (
 							transactionHistories.data.records.map((transactionHistory) => {
 								const isTopUp = transactionHistory.transaction_type === 'TOPUP';
 								return (
@@ -102,29 +95,30 @@ const TransactionList = () => {
 					<Skeleton className="w-[150px] h-[20px] m-auto" />
 				) : (
 					<>
-						{hasNextPage && (
-							<Button
-								className="m-auto"
-								variant="link"
-								onClick={() => {
-									if (
-										transactionHistories &&
-										transactionHistories.data.records.length > 0
-									) {
-										console.log('clicked');
-										setOffset(
-											Number(
-												Number(transactionHistories.data.limit) +
-													Number(transactionHistories.data.offset)
-											)
-										);
-									}
-								}}
-								isLoading={isFetching}
-							>
-								Load More
-							</Button>
-						)}
+						{transactionHistories &&
+							transactionHistories.data.has_next_page && (
+								<Button
+									className="m-auto"
+									variant="link"
+									onClick={() => {
+										if (
+											transactionHistories &&
+											transactionHistories.data.records.length > 0
+										) {
+											console.log('clicked');
+											setOffset(
+												Number(
+													Number(transactionHistories.data.limit) +
+														Number(transactionHistories.data.offset)
+												)
+											);
+										}
+									}}
+									isLoading={isFetching}
+								>
+									Load More
+								</Button>
+							)}
 					</>
 				)}
 			</div>

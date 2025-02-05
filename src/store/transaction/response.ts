@@ -14,6 +14,7 @@ export type PaidTransactionResponse = Response<{
 export type TransactionHistoryResponse = Response<{
 	offset: number;
 	limit: number;
+	has_next_page: boolean;
 	records: Array<{
 		invoice_number: string;
 		transaction_type: string;

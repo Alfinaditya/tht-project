@@ -1,6 +1,6 @@
-import { TRANSACTION_HISTORY_PAGE } from '@/api/transaction/common';
 import { Card } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
+import { TRANSACTION_HISTORY_PAGE } from '@/store/transaction/slice';
 
 const TransactionListSkeleton = () => {
 	return (

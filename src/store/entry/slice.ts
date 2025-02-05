@@ -1,7 +1,7 @@
 import fetchQuery from '@/lib/http';
-import { Response } from '@/types/api';
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { LoginInput } from './dto';
+import { LoginInput, RegisterInput } from './dto';
+import { LoginResponse, RegisterResponse } from './response';
 
 export const entryApiSlice = createApi({
 	reducerPath: 'entry',
@@ -9,15 +9,22 @@ export const entryApiSlice = createApi({
 	tagTypes: ['ENTRY'],
 	endpoints: (builder) => {
 		return {
-			login: builder.mutation<Response<{ token: string }>, LoginInput>({
-				query: (post) => ({
+			login: builder.mutation<LoginResponse, LoginInput>({
+				query: (data) => ({
 					url: '/login',
 					method: 'POST',
-					body: post,
+					body: data,
+				}),
+			}),
+			register: builder.mutation<RegisterResponse, RegisterInput>({
+				query: (data) => ({
+					url: '/registration',
+					method: 'POST',
+					body: data,
 				}),
 			}),
 		};
 	},
 });
 
-export const { useLoginMutation } = entryApiSlice;
+export const { useLoginMutation, useRegisterMutation } = entryApiSlice;

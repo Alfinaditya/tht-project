@@ -28,12 +28,26 @@ export const transactionApiSlice = createApi({
 			>({
 				query: ({ offset }) =>
 					`/transaction/history?limit=${TRANSACTION_HISTORY_PAGE}&offset=${offset}`,
-				serializeQueryArgs: ({ endpointName, queryArgs }) => {
-					return `${endpointName}-${queryArgs}`;
+
+				serializeQueryArgs: ({ endpointName }) => {
+					return endpointName;
 				},
-				// // Refetch when the page arg changes
+				merge: (currentCache, newItems) => {
+					console.log('@@ new items', newItems);
+					return {
+						...currentCache,
+						data: {
+							limit: newItems.data.limit,
+							offset: newItems.data.offset,
+							records: [...currentCache.data.records, ...newItems.data.records],
+							has_next_page:
+								Number(newItems.data.records.length) ===
+								Number(TRANSACTION_HISTORY_PAGE),
+						},
+					};
+				},
 				forceRefetch({ currentArg, previousArg }) {
-					return currentArg?.offset !== previousArg?.offset;
+					return currentArg !== previousArg;
 				},
 				providesTags: ['TRANSACTION'],
 			}),

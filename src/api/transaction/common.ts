@@ -1,1 +1,0 @@
-export const TRANSACTION_HISTORY_PAGE = 5;

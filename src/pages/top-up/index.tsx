@@ -1,4 +1,3 @@
-import { TopUpInput, TopUpSchema } from '@/api/transaction/dto';
 import { BalanceCard } from '@/components/balance-card';
 import { WelcomeProfile } from '@/components/welcome-profile';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -15,6 +14,7 @@ import { CurrencyInput } from '@/components/currency-input';
 import { useState } from 'react';
 import { Banknote } from 'lucide-react';
 import ConfirmTopUpModal from './components/confirm-top-up-modal';
+import { TopUpInput, TopUpSchema } from '@/store/transaction/dto';
 
 const BALANCE_OPTIONS = [
 	{

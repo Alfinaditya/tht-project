@@ -1,10 +1,12 @@
-import { MAX_UPLOAD_IMAGE_SIZE } from '@/api/profile/common';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { ProfileResponse } from '@/store/profile/response';
-import { useUpdateImageProfileMutation } from '@/store/profile/slice';
+import {
+	MAX_UPLOAD_IMAGE_SIZE,
+	useUpdateImageProfileMutation,
+} from '@/store/profile/slice';
 import { Pencil } from 'lucide-react';
 import React, { useRef, useState } from 'react';
 

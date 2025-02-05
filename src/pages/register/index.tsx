@@ -1,5 +1,3 @@
-import { RegisterInput, RegisterSchema } from '@/api/entry/dto';
-import { useRegisterMutation } from '@/api/entry/mutations';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -13,17 +11,17 @@ import {
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { ExceptionResponse } from '@/api/types';
 import { AtSign, Eye, EyeOff, LockKeyhole, User, X } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useRegisterMutation } from '@/store/entry/slice';
+import { RegisterInput, RegisterSchema } from '@/store/entry/dto';
 
 const RegisterPage = () => {
 	const [isShowPassword, setIsShowPassword] = useState(false);
 	const [isShowConfirmPassword, setIsShowConfirmPassword] = useState(false);
 	const [customErrorMessage, setCustomErrorMessage] = useState('');
 	const navigate = useNavigate();
-	const { mutateAsync: registerMutateAsync, isPending } = useRegisterMutation();
+	const [registerMutation, { isLoading }] = useRegisterMutation();
 	const form = useForm<RegisterInput>({
 		resolver: zodResolver(RegisterSchema),
 		defaultValues: {
@@ -37,20 +35,16 @@ const RegisterPage = () => {
 
 	const onSubmit = async (data: RegisterInput) => {
 		try {
-			await registerMutateAsync({
+			await registerMutation({
 				email: data.email,
 				first_name: data.first_name,
 				last_name: data.last_name,
 				password: data.password,
 				password_confirmation: data.password_confirmation,
-			});
+			}).unwrap();
 			navigate('/login');
 		} catch (error: any) {
-			if (axios.isAxiosError(error)) {
-				const err: ExceptionResponse = error;
-				setCustomErrorMessage(err.response?.data.message as string);
-				return;
-			}
+			setCustomErrorMessage(error.data.message);
 		}
 	};
 	return (
@@ -187,7 +181,7 @@ const RegisterPage = () => {
 									</FormItem>
 								)}
 							/>
-							<Button isLoading={isPending} type="submit" className="w-full">
+							<Button isLoading={isLoading} type="submit" className="w-full">
 								Registrasi
 							</Button>
 						</form>

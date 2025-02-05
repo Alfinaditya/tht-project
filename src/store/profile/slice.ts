@@ -3,6 +3,8 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 import { ProfileResponse } from './response';
 import { UpdateImageProfileInput, UpdateProfileInput } from './dto';
 
+export const MAX_UPLOAD_IMAGE_SIZE = 102400;
+
 export const profileApiSlice = createApi({
 	reducerPath: 'profile',
 	baseQuery: fetchQuery,
