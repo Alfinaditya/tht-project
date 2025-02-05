@@ -1,57 +1,36 @@
-import axios, { HttpStatusCode } from 'axios';
+import {
+	BaseQueryApi,
+	FetchArgs,
+	fetchBaseQuery,
+} from '@reduxjs/toolkit/query/react';
 import { BASE_URL } from './constants';
 import Cookies from 'js-cookie';
+import { getAuthToken } from './utils';
 
-const http = axios.create({
-	baseURL: BASE_URL,
-	// headers: {
-	// 	'Accept-Encoding': 'gzip, deflate, br',
-	// },
+// Enhancing the baseQuery with custom error handling
+const baseQuery = fetchBaseQuery({
+	baseUrl: BASE_URL,
+	prepareHeaders: (headers) => {
+		headers.set('Authorization', `Bearer ${getAuthToken()}`);
+		return headers;
+	},
 });
 
-// Request Interceptor for Adding Authorization Header
-http.interceptors.request.use(
-	async (config) => {
-		try {
-			const session = await Cookies.get('sid');
-			if (session) {
-				config.headers.Authorization = `Bearer ${session}`;
-			} else {
-				delete config.headers.Authorization;
-			}
-		} catch (error) {
-			console.error('Error fetching session:', error);
-		}
-		return config;
-	},
-	(error) => {
-		console.error('Request Interceptor Error:', error);
-		return Promise.reject(error);
+const fetchQuery = async (
+	args: string | FetchArgs,
+	api: BaseQueryApi,
+	extraOptions: {}
+) => {
+	const result = await baseQuery(args, api, extraOptions);
+
+	if (result.error && result.error.status === 401) {
+		// Handle the 401 error here, e.g., redirecting to login
+		Cookies.remove('sid');
+		window.location.href = '/login';
+		// Or dispatch an action to log out the user, etc.
+		// api.dispatch(logoutUser());
 	}
-);
+	return result;
+};
 
-// Response Interceptor for Handling Errors
-http.interceptors.response.use(
-	(response) => response,
-	async (error) => {
-		const statusCode = error.response?.status || null;
-
-		if (statusCode === HttpStatusCode.Unauthorized) {
-			Cookies.remove('sid');
-			window.location.replace('/login');
-		}
-
-		if (statusCode === HttpStatusCode.Forbidden) {
-			throw new Error(`Forbidden. You don't have access to this resource.`);
-			// Optional: Add custom logic for 403 errors.
-		}
-
-		if (!error.response) {
-			console.error('Network error or server not reachable.');
-		}
-
-		return Promise.reject(error);
-	}
-);
-
-export default http;
+export default fetchQuery;

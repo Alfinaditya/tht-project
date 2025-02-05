@@ -7,3 +7,5 @@ interface BaseResponse<T> {
 export type Response<T> = AxiosResponse<BaseResponse<T>>;
 
 export type ExceptionResponse = AxiosError<BaseResponse<null>>;
+
+export type NewResponse<T> = BaseResponse<T>;

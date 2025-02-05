@@ -9,21 +9,19 @@ import {
 } from '@/components/ui/form';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { LoginInput, LoginSchema } from '@/api/entry/dto';
-import { useLoginMutation } from '@/api/entry/mutations';
-import axios from 'axios';
-import { ExceptionResponse } from '@/api/types';
 import { useState } from 'react';
-import Cookies from 'js-cookie';
 import { Link, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, LockKeyhole, User, X } from 'lucide-react';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useLoginMutation } from '@/store/entry/slice';
+import Cookies from 'js-cookie';
+import { LoginInput, LoginSchema } from '@/store/entry/dto';
 
 const LoginPage = () => {
 	const navigate = useNavigate();
 	const [customErrorMessage, setCustomErrorMessage] = useState('');
 	const [isShowPassword, setIsShowPassword] = useState(false);
-	const { mutateAsync: loginMutateAsync, isPending } = useLoginMutation();
+	const [loginMutation, { isLoading }] = useLoginMutation();
 	const form = useForm<LoginInput>({
 		resolver: zodResolver(LoginSchema),
 		defaultValues: {
@@ -34,18 +32,14 @@ const LoginPage = () => {
 
 	const onSubmit = async (data: LoginInput) => {
 		try {
-			const res = await loginMutateAsync({
+			const res = await loginMutation({
 				email: data.email,
 				password: data.password,
-			});
-			Cookies.set('sid', res.data.data.token);
+			}).unwrap();
+			Cookies.set('sid', res.data.token);
 			navigate('/');
 		} catch (error: any) {
-			if (axios.isAxiosError(error)) {
-				const err: ExceptionResponse = error;
-				setCustomErrorMessage(err.response?.data.message as string);
-				return;
-			}
+			setCustomErrorMessage(error.data.message);
 		}
 	};
 	return (
@@ -117,7 +111,7 @@ const LoginPage = () => {
 									</FormItem>
 								)}
 							/>
-							<Button isLoading={isPending} className="w-full" type="submit">
+							<Button isLoading={isLoading} className="w-full" type="submit">
 								Masuk
 							</Button>
 						</form>

@@ -1,17 +1,17 @@
 import { Card } from './ui/card';
-import { useBalance } from '@/api/transaction/queries';
 import { Button } from './ui/button';
 import { cn, toRupiahFormat } from '@/lib/utils';
 import React from 'react';
 import { Eye } from 'lucide-react';
 import { Skeleton } from './ui/skeleton';
+import { useGetBalanceQuery } from '@/store/transaction/slice';
 
 const BalanceCard = React.forwardRef<
 	HTMLDivElement,
 	React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => {
 	const [showBalance, setShowBalance] = React.useState(false);
-	const { isLoading: isBalanceLoading, data: balance } = useBalance();
+	const { isLoading: isBalanceLoading, data: balance } = useGetBalanceQuery();
 	return (
 		<Card
 			ref={ref}
@@ -29,9 +29,7 @@ const BalanceCard = React.forwardRef<
 					<p>Saldo anda</p>
 					{balance && (
 						<p className="text-5xl my-4">
-							{showBalance
-								? toRupiahFormat(balance.data.data.balance)
-								: '• • • • •'}
+							{showBalance ? toRupiahFormat(balance.data.balance) : '• • • • •'}
 						</p>
 					)}
 					<Button

@@ -1,12 +1,10 @@
 import { MAX_UPLOAD_IMAGE_SIZE } from '@/api/profile/common';
-import { useUpdateImageProfileMutation } from '@/api/profile/mutations';
-import { ProfileResponse } from '@/api/profile/responses';
-import { ExceptionResponse } from '@/api/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
-import axios from 'axios';
+import { ProfileResponse } from '@/store/profile/response';
+import { useUpdateImageProfileMutation } from '@/store/profile/slice';
 import { Pencil } from 'lucide-react';
 import React, { useRef, useState } from 'react';
 
@@ -17,12 +15,8 @@ const EditAvatarSection: React.FC<Props> = ({ profile }) => {
 	const { toast } = useToast();
 	const [newImage, setNewImage] = useState('');
 	const inputFileRef = useRef<HTMLInputElement>(null);
-	// const [customErrorMessage, setCustomErrorMessage] = useState('');
-	const {
-		mutateAsync: updateImageProfileMutateAsync,
-		// isError: isUpdateImageProfileError,
-		isPending: isUpdateImageProfilePending,
-	} = useUpdateImageProfileMutation();
+	const [updateImageProfileMutation, { isLoading }] =
+		useUpdateImageProfileMutation();
 
 	const handleChangeAvatar = async (e: React.ChangeEvent<HTMLInputElement>) => {
 		const files = e.target.files;
@@ -38,20 +32,16 @@ const EditAvatarSection: React.FC<Props> = ({ profile }) => {
 				return;
 			}
 			try {
-				const res = await updateImageProfileMutateAsync({
+				const res = await updateImageProfileMutation({
 					file: file,
-				});
-				setNewImage(res.data.data.profile_image);
+				}).unwrap();
+				setNewImage(res.data.profile_image);
 			} catch (error: any) {
-				if (axios.isAxiosError(error)) {
-					const err: ExceptionResponse = error;
-					toast({
-						title: 'Edit Profile Gagal',
-						variant: 'destructive',
-						description: err.response?.data.message as string,
-					});
-					return;
-				}
+				toast({
+					title: 'Edit Profile Gagal',
+					variant: 'destructive',
+					description: error.data.message,
+				});
 			}
 		}
 	};
@@ -60,17 +50,17 @@ const EditAvatarSection: React.FC<Props> = ({ profile }) => {
 			<Avatar className="w-[120px] h-[120px] border-primary">
 				<AvatarImage
 					className="object-cover"
-					src={newImage ? newImage : profile.data.data.profile_image}
+					src={newImage ? newImage : profile.data.profile_image}
 				/>
 				<AvatarFallback>
-					{profile.data.data.first_name} {profile.data.data.last_name}
+					{profile.data.first_name} {profile.data.last_name}
 				</AvatarFallback>
 			</Avatar>
 			<Button
 				size="icon"
 				variant="outline"
 				className="rounded-full absolute right-0 bottom-0"
-				disabled={isUpdateImageProfilePending}
+				disabled={isLoading}
 				onClick={() => inputFileRef.current?.click()}
 			>
 				<Pencil />

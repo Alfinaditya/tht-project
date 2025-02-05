@@ -1,24 +1,51 @@
-import { useInfiniteTransactionHistory } from '@/api/transaction/queries';
-import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { format } from 'date-fns';
-import { cn, toRupiahFormat } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import TransactionListSkeleton from './transaction-list-skeleton';
+import {
+	TRANSACTION_HISTORY_PAGE,
+	useGetTransactionHistoryQuery,
+} from '@/store/transaction/slice';
+import { useEffect, useState } from 'react';
+import { Card } from '@/components/ui/card';
+import { format } from 'date-fns';
+import { cn, toRupiahFormat } from '@/lib/utils';
 import { WalletCards } from 'lucide-react';
+import { TransactionHistoryResponse } from '@/store/transaction/response';
 
 const TransactionList = () => {
+	const [offset, setOffset] = useState(0);
+	const [hasNextPage, setHasNextPage] = useState(true);
+	const [transactionHistories, setTransactionHistories] =
+		useState<TransactionHistoryResponse>();
 	const {
-		data: infiniteData,
-		isFetchingNextPage,
-		fetchNextPage,
-		hasNextPage,
+		data: nextData,
 		isLoading,
-	} = useInfiniteTransactionHistory();
+		isFetching,
+	} = useGetTransactionHistoryQuery({ offset });
 
-	const transactionHistoryRecords =
-		infiniteData &&
-		infiniteData.pages.map((page) => page.data.data.records).flat();
+	useEffect(() => {
+		if (nextData) {
+			if (nextData.data.records.length < TRANSACTION_HISTORY_PAGE) {
+				setHasNextPage(false);
+			}
+			if (nextData.data.records.length > 0) {
+				setTransactionHistories({
+					...nextData,
+					data: {
+						limit: nextData.data.limit,
+						offset: nextData.data.offset,
+						records: [
+							...(transactionHistories
+								? transactionHistories.data.records
+								: []),
+							...nextData.data.records,
+						],
+					},
+				});
+			}
+		}
+	}, [nextData]);
+
 	return (
 		<>
 			<div className="space-y-8">
@@ -26,14 +53,12 @@ const TransactionList = () => {
 					<TransactionListSkeleton />
 				) : (
 					<>
-						{transactionHistoryRecords &&
-						transactionHistoryRecords.length > 0 ? (
-							transactionHistoryRecords.map((transactionHistoryRecord) => {
-								const isTopUp =
-									transactionHistoryRecord.transaction_type === 'TOPUP';
+						{transactionHistories ? (
+							transactionHistories.data.records.map((transactionHistory) => {
+								const isTopUp = transactionHistory.transaction_type === 'TOPUP';
 								return (
 									<Card
-										key={transactionHistoryRecord.invoice_number}
+										key={transactionHistory.invoice_number}
 										className="flex justify-between items-center p-5"
 									>
 										<div className="space-y-2">
@@ -44,18 +69,14 @@ const TransactionList = () => {
 												)}
 											>
 												{isTopUp ? '+' : '-'}{' '}
-												{toRupiahFormat(transactionHistoryRecord.total_amount)}
+												{toRupiahFormat(transactionHistory.total_amount)}
 											</p>
 											<p className="text-sm">
-												{format(
-													transactionHistoryRecord.created_on,
-													'd MMMM y HH:m'
-												)}{' '}
+												{format(transactionHistory.created_on, 'd MMMM y HH:m')}{' '}
 												WIB
-												{/* {transactionHistoryRecord.created_on} */}
 											</p>
 										</div>
-										<p>{transactionHistoryRecord.description}</p>
+										<p>{transactionHistory.description}</p>
 									</Card>
 								);
 							})
@@ -73,7 +94,7 @@ const TransactionList = () => {
 						)}
 					</>
 				)}
-				{isFetchingNextPage && <TransactionListSkeleton />}
+				{isFetching && <TransactionListSkeleton />}
 			</div>
 
 			<div className="w-full mt-10 text-center">
@@ -81,18 +102,29 @@ const TransactionList = () => {
 					<Skeleton className="w-[150px] h-[20px] m-auto" />
 				) : (
 					<>
-						{transactionHistoryRecords &&
-							transactionHistoryRecords.length > 0 &&
-							hasNextPage && (
-								<Button
-									className="m-auto"
-									variant="link"
-									onClick={() => fetchNextPage()}
-									isLoading={isFetchingNextPage}
-								>
-									Load More
-								</Button>
-							)}
+						{hasNextPage && (
+							<Button
+								className="m-auto"
+								variant="link"
+								onClick={() => {
+									if (
+										transactionHistories &&
+										transactionHistories.data.records.length > 0
+									) {
+										console.log('clicked');
+										setOffset(
+											Number(
+												Number(transactionHistories.data.limit) +
+													Number(transactionHistories.data.offset)
+											)
+										);
+									}
+								}}
+								isLoading={isFetching}
+							>
+								Load More
+							</Button>
+						)}
 					</>
 				)}
 			</div>

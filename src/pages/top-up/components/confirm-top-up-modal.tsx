@@ -12,7 +12,7 @@ import { toRupiahFormat } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { Check, Wallet, X } from 'lucide-react';
-import { useTopUpMutation } from '@/api/transaction/mutations';
+import { useTopUpMutation } from '@/store/transaction/slice';
 
 interface Props extends ModalProps {
 	topUpAmount: number;
@@ -22,16 +22,11 @@ const ConfirmTopUpModal: React.FC<Props> = ({
 	topUpAmount,
 	setOpenModal,
 }) => {
-	const {
-		mutateAsync: topUpMutateAsync,
-		isPending,
-		isSuccess,
-		isError,
-	} = useTopUpMutation();
+	const [topUpMutation, { isSuccess, isLoading, isError }] = useTopUpMutation();
 
 	const navigate = useNavigate();
 	const handleSubmit = async () => {
-		await topUpMutateAsync({
+		await topUpMutation({
 			top_up_amount: String(topUpAmount),
 		});
 	};
@@ -124,13 +119,13 @@ const ConfirmTopUpModal: React.FC<Props> = ({
 											onClick={handleSubmit}
 											variant="link"
 											className="font-medium"
-											isLoading={isPending}
+											isLoading={isLoading}
 										>
 											Ya, lanjutkan Top Up
 										</Button>
 										<Button
 											variant="link"
-											disabled={isPending}
+											disabled={isLoading}
 											className="text-gray-500"
 											onClick={() => setOpenModal(false)}
 										>

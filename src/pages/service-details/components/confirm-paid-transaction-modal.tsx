@@ -12,7 +12,7 @@ import { toRupiahFormat } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 import { Check, Wallet, X } from 'lucide-react';
-import { usePaidTransactionMutation } from '@/api/transaction/mutations';
+import { usePaidTransactionMutation } from '@/store/transaction/slice';
 
 interface Props extends ModalProps {
 	selectedService:
@@ -29,16 +29,18 @@ const ConfirmPaidTransactionModal: React.FC<Props> = ({
 	selectedService,
 	setOpenModal,
 }) => {
-	const {
-		mutateAsync: paidTransactionMutateAsync,
-		isPending: isPaidTransactionLoading,
-		isSuccess: isPaidTransactionSuccess,
-		isError: isPaidTransactionError,
-	} = usePaidTransactionMutation();
+	const [
+		paidTransactionMutation,
+		{
+			isLoading: isPaidTransactionLoading,
+			isSuccess: isPaidTransactionSuccess,
+			isError: isPaidTransactionError,
+		},
+	] = usePaidTransactionMutation();
 	const navigate = useNavigate();
 	const handleSubmit = async () => {
 		if (!selectedService) return;
-		await paidTransactionMutateAsync({
+		await paidTransactionMutation({
 			service_code: selectedService.service_code,
 		});
 	};

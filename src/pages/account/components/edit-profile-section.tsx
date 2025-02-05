@@ -13,14 +13,12 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useUpdateProfileMutation } from '@/api/profile/mutations';
 import { UpdateProfileInput, UpdateProfileSchema } from '@/api/profile/dto';
-import { ProfileResponse } from '@/api/profile/responses';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
-import axios from 'axios';
-import { ExceptionResponse } from '@/api/types';
 import { useToast } from '@/hooks/use-toast';
+import { useUpdateProfileMutation } from '@/store/profile/slice';
+import { ProfileResponse } from '@/store/profile/response';
 
 interface Props {
 	profile: ProfileResponse;
@@ -29,10 +27,7 @@ interface Props {
 const EditProfileSection: React.FC<Props> = ({ profile }) => {
 	const { toast } = useToast();
 	const [isUpdateProfile, setIsUpdateProfile] = useState(false);
-	const {
-		mutateAsync: updateProfileMutateAsync,
-		isPending: isUpdateProfilePending,
-	} = useUpdateProfileMutation();
+	const [updateProfileMutaton, { isLoading }] = useUpdateProfileMutation();
 	const navigate = useNavigate();
 
 	const form = useForm<UpdateProfileInput>({
@@ -44,7 +39,7 @@ const EditProfileSection: React.FC<Props> = ({ profile }) => {
 	});
 	const onSubmit = async (data: UpdateProfileInput) => {
 		try {
-			await updateProfileMutateAsync({
+			await updateProfileMutaton({
 				first_name: data.first_name,
 				last_name: data.last_name,
 			});
@@ -55,22 +50,18 @@ const EditProfileSection: React.FC<Props> = ({ profile }) => {
 				description: 'Profile Anda berhasil diperbarui',
 			});
 		} catch (error: any) {
-			if (axios.isAxiosError(error)) {
-				const err: ExceptionResponse = error;
-				toast({
-					title: 'Edit Profile Gagal',
-					variant: 'destructive',
-					description: err.response?.data.message as string,
-				});
-				return;
-			}
+			toast({
+				title: 'Edit Profile Gagal',
+				variant: 'destructive',
+				description: error.data.message,
+			});
 		}
 	};
 
 	useEffect(() => {
 		if (profile) {
-			form.setValue('first_name', profile.data.data.first_name);
-			form.setValue('last_name', profile.data.data.last_name);
+			form.setValue('first_name', profile.data.first_name);
+			form.setValue('last_name', profile.data.last_name);
 		}
 	}, [profile]);
 	return (
@@ -81,7 +72,7 @@ const EditProfileSection: React.FC<Props> = ({ profile }) => {
 					<Input
 						startAdornment={<AtSign className="w-4" />}
 						disabled
-						defaultValue={profile.data.data.email}
+						defaultValue={profile.data.email}
 					/>
 				</div>
 				<FormField
@@ -125,17 +116,13 @@ const EditProfileSection: React.FC<Props> = ({ profile }) => {
 
 				{isUpdateProfile ? (
 					<div className="flex-col gap-y-5 flex">
-						<Button
-							key={'save-button'}
-							disabled={isUpdateProfilePending}
-							type="submit"
-						>
+						<Button key={'save-button'} disabled={isLoading} type="submit">
 							Simpan
 						</Button>
 						<Button
 							variant="outline"
 							key={'back-button'}
-							disabled={isUpdateProfilePending}
+							disabled={isLoading}
 							type="button"
 							onClick={() => setIsUpdateProfile(false)}
 						>

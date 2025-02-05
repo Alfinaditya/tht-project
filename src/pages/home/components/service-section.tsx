@@ -1,10 +1,10 @@
-import { useService } from '@/api/information/queries';
 import { useNavigate } from 'react-router-dom';
 import ServiceSectionSkeleton from './service-section-skeleton';
+import { useGetServiceQuery } from '@/store/information/slice';
 
 const ServiceSection = () => {
 	const navigate = useNavigate();
-	const { isLoading: isServiceLoading, data: services } = useService();
+	const { isLoading: isServiceLoading, data: services } = useGetServiceQuery();
 	return (
 		<>
 			{isServiceLoading ? (
@@ -12,7 +12,7 @@ const ServiceSection = () => {
 			) : (
 				<div className="flex gap-x-10 mb-20">
 					{services &&
-						services.data.data.map((service) => (
+						services.data.map((service) => (
 							<div
 								onClick={() => navigate(`/service/${service.service_code}`)}
 								key={service.service_code}
