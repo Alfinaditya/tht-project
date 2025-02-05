@@ -15,14 +15,12 @@ import { Check, Wallet, X } from 'lucide-react';
 import { usePaidTransactionMutation } from '@/store/transaction/slice';
 
 interface Props extends ModalProps {
-	selectedService:
-		| {
-				service_code: string;
-				service_name: string;
-				service_icon: string;
-				service_tariff: number;
-		  }
-		| undefined;
+	selectedService: {
+		service_code: string;
+		service_name: string;
+		service_icon: string;
+		service_tariff: number;
+	};
 }
 const ConfirmPaidTransactionModal: React.FC<Props> = ({
 	open,
@@ -44,9 +42,7 @@ const ConfirmPaidTransactionModal: React.FC<Props> = ({
 			service_code: selectedService.service_code,
 		});
 	};
-	if (!selectedService) {
-		return <></>;
-	}
+
 	return (
 		<AlertDialog onOpenChange={setOpenModal} open={open}>
 			<AlertDialogContent className="w-[25%] min-w-min">
@@ -60,7 +56,7 @@ const ConfirmPaidTransactionModal: React.FC<Props> = ({
 							</AlertDialogTitle>
 							<AlertDialogDescription>
 								<div className="text-center mt-4">
-									<p>Top Up sebesar</p>
+									<p>Pembayaran {selectedService.service_name} sebesar</p>
 									<p className="text-xl font-bold text-black my-2">
 										{toRupiahFormat(selectedService.service_tariff)}
 									</p>
@@ -92,7 +88,7 @@ const ConfirmPaidTransactionModal: React.FC<Props> = ({
 									</AlertDialogTitle>
 									<AlertDialogDescription>
 										<div className="text-center mt-3">
-											<p>Top Up sebesar</p>
+											<p>Pembayaran {selectedService.service_name} sebesar</p>
 											<p className="text-xl font-bold text-black my-2">
 												{toRupiahFormat(selectedService.service_tariff)}
 											</p>
