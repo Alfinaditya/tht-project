@@ -21,7 +21,7 @@ A modern web application built with React, Vite, TypeScript, and Tailwind CSS.
 
 - **Framework**: React + Vite
 - **Language**: TypeScript
-- **State Management**: React Query
+- **State Management**: Redux
 - **Styling**: Tailwind CSS
 - **Form Handling**: React Hook Form + Zod
 - **HTTP Client**: Axios
