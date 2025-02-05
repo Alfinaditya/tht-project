@@ -17,13 +17,14 @@ export const useBalance = () =>
 export const useInfiniteTransactionHistory = () =>
 	useInfiniteQuery<TransactionHistoryResponse, Error>({
 		queryKey: [QueryKeys.TRANSACTION_HISTORY],
+		gcTime: 0,
 		queryFn: async ({ pageParam }) =>
 			transactionHistory({
 				limit: TRANSACTION_HISTORY_PAGE,
 				offset: pageParam as number,
 			}),
 		initialPageParam: 0,
-		getNextPageParam: (lastPage, _allPages, _lastPageParam) => {
+		getNextPageParam: (lastPage) => {
 			const lastPageItem = lastPage.data;
 			if (
 				lastPageItem &&

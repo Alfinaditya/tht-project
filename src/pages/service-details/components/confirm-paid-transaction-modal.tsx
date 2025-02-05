@@ -38,17 +38,9 @@ const ConfirmPaidTransactionModal: React.FC<Props> = ({
 	const navigate = useNavigate();
 	const handleSubmit = async () => {
 		if (!selectedService) return;
-		try {
-			await paidTransactionMutateAsync({
-				service_code: selectedService.service_code,
-			});
-		} catch (error: any) {
-			// if (axios.isAxiosError(error)) {
-			// 	const err: ExceptionResponse = error;
-			// 	setCustomErrorMessage(err.response?.data.message as string);
-			// 	return;
-			// }
-		}
+		await paidTransactionMutateAsync({
+			service_code: selectedService.service_code,
+		});
 	};
 	if (!selectedService) {
 		return <></>;

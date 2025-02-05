@@ -5,6 +5,7 @@ import { ExceptionResponse } from '@/api/types';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { useToast } from '@/hooks/use-toast';
 import axios from 'axios';
 import { Pencil } from 'lucide-react';
 import React, { useRef, useState } from 'react';
@@ -13,12 +14,13 @@ interface Props {
 	profile: ProfileResponse;
 }
 const EditAvatarSection: React.FC<Props> = ({ profile }) => {
+	const { toast } = useToast();
 	const [newImage, setNewImage] = useState('');
 	const inputFileRef = useRef<HTMLInputElement>(null);
-	const [customErrorMessage, setCustomErrorMessage] = useState('');
+	// const [customErrorMessage, setCustomErrorMessage] = useState('');
 	const {
 		mutateAsync: updateImageProfileMutateAsync,
-		isError: isUpdateImageProfileError,
+		// isError: isUpdateImageProfileError,
 		isPending: isUpdateImageProfilePending,
 	} = useUpdateImageProfileMutation();
 
@@ -27,9 +29,12 @@ const EditAvatarSection: React.FC<Props> = ({ profile }) => {
 		if (files && files.length > 0) {
 			const file = files[0];
 			if (file.size > MAX_UPLOAD_IMAGE_SIZE) {
-				alert(
-					'File size must be 100KB or less (max 102,400 bytes). Please select a smaller file.'
-				);
+				toast({
+					title: 'Edit Profile Gagal',
+					variant: 'destructive',
+					description:
+						'Ukuran gambar harus 100KB atau kurang (maksimal 102.400 byte). Silakan pilih file yang lebih kecil.',
+				});
 				return;
 			}
 			try {
@@ -40,7 +45,11 @@ const EditAvatarSection: React.FC<Props> = ({ profile }) => {
 			} catch (error: any) {
 				if (axios.isAxiosError(error)) {
 					const err: ExceptionResponse = error;
-					setCustomErrorMessage(err.response?.data.message as string);
+					toast({
+						title: 'Edit Profile Gagal',
+						variant: 'destructive',
+						description: err.response?.data.message as string,
+					});
 					return;
 				}
 			}

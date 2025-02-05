@@ -31,17 +31,9 @@ const ConfirmTopUpModal: React.FC<Props> = ({
 
 	const navigate = useNavigate();
 	const handleSubmit = async () => {
-		try {
-			await topUpMutateAsync({
-				top_up_amount: String(topUpAmount),
-			});
-		} catch (error: any) {
-			// if (axios.isAxiosError(error)) {
-			// 	const err: ExceptionResponse = error;
-			// 	setCustomErrorMessage(err.response?.data.message as string);
-			// 	return;
-			// }
-		}
+		await topUpMutateAsync({
+			top_up_amount: String(topUpAmount),
+		});
 	};
 
 	return (

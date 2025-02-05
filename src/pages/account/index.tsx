@@ -6,7 +6,7 @@ import EditAvatarSection from './components/edit-avatar-section';
 const AccountPage = () => {
 	const { data: profile, isLoading } = useProfile();
 	return (
-		<div className="w-[90%] m-auto">
+		<div className="w-[70%] m-auto">
 			{isLoading ? (
 				<EditProfileSkeleton />
 			) : (

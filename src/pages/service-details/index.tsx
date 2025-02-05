@@ -10,7 +10,7 @@ import { useParams } from 'react-router-dom';
 import ConfirmPaidTransactionModal from './components/confirm-paid-transaction-modal';
 
 const ServiceDetails = () => {
-	let { id } = useParams();
+	const { id } = useParams();
 	const [openConfirmModal, setOpenConfirmModal] = useState(false);
 	const { isLoading: isServiceLoading, data: services } = useService({
 		enabled: !!id,

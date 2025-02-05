@@ -1,6 +1,7 @@
 import { Button } from '@/components/ui/button';
+import { Toaster } from '@/components/ui/toaster';
 import { cn, getAuthToken } from '@/lib/utils';
-import { Link, Navigate, NavLink, Outlet, useLocation } from 'react-router-dom';
+import { Link, Navigate, Outlet, useLocation } from 'react-router-dom';
 const LINKS = [
 	{
 		id: crypto.randomUUID(),
@@ -19,13 +20,14 @@ const LINKS = [
 	},
 ];
 const DashboardLayout = () => {
-	let location = useLocation();
+	const location = useLocation();
 	if (!getAuthToken()) {
 		return <Navigate to="/login" replace />;
 	}
 
 	return (
 		<>
+			<Toaster />
 			<nav className="shadow-sm p-5 mb-10">
 				<ul className="flex items-center">
 					<li className="flex-1">

@@ -20,18 +20,17 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import axios from 'axios';
 import { ExceptionResponse } from '@/api/types';
-import { Skeleton } from '@/components/ui/skeleton';
+import { useToast } from '@/hooks/use-toast';
 
 interface Props {
 	profile: ProfileResponse;
 }
 
 const EditProfileSection: React.FC<Props> = ({ profile }) => {
-	const [customErrorMessage, setCustomErrorMessage] = useState('');
+	const { toast } = useToast();
 	const [isUpdateProfile, setIsUpdateProfile] = useState(false);
 	const {
 		mutateAsync: updateProfileMutateAsync,
-		isError: isUpdateProfileError,
 		isPending: isUpdateProfilePending,
 	} = useUpdateProfileMutation();
 	const navigate = useNavigate();
@@ -50,10 +49,19 @@ const EditProfileSection: React.FC<Props> = ({ profile }) => {
 				last_name: data.last_name,
 			});
 			setIsUpdateProfile(false);
+			toast({
+				title: 'Edit Profile Berhasil',
+				variant: 'default',
+				description: 'Profile Anda berhasil diperbarui',
+			});
 		} catch (error: any) {
 			if (axios.isAxiosError(error)) {
 				const err: ExceptionResponse = error;
-				setCustomErrorMessage(err.response?.data.message as string);
+				toast({
+					title: 'Edit Profile Gagal',
+					variant: 'destructive',
+					description: err.response?.data.message as string,
+				});
 				return;
 			}
 		}

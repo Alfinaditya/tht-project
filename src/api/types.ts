@@ -1,4 +1,4 @@
-import { AxiosError, AxiosResponse, HttpStatusCode } from 'axios';
+import { AxiosError, AxiosResponse } from 'axios';
 interface BaseResponse<T> {
 	status: number;
 	message: string;

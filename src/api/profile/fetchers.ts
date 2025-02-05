@@ -16,7 +16,7 @@ export const updateProfile = async (
 export const updateImageProfile = async (
 	data: UpdateImageProfileInput
 ): Promise<ProfileResponse> => {
-	let formData = new FormData();
+	const formData = new FormData();
 	formData.append('file', data.file);
 	return await http.put('/profile/image', formData, {
 		headers: {
