@@ -13,38 +13,72 @@ If you are developing a production application, we recommend updating the config
 
 - Configure the top-level `parserOptions` property like this:
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+# sims-ppob
+
+A modern web application built with React, Vite, TypeScript, and Tailwind CSS.
+
+## 📦 Tech Stack
+
+- **Framework**: React + Vite
+- **Language**: TypeScript
+- **State Management**: React Query
+- **Styling**: Tailwind CSS
+- **Form Handling**: React Hook Form + Zod
+- **HTTP Client**: Axios
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+Make sure you have **Node.js v18.18.2** installed. You can check your version with:
+
+```
+node -v
 ```
 
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
+### Installation
 
-```js
-// eslint.config.js
-import react from 'eslint-plugin-react'
+1. Clone the repository:
 
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: '18.3' } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs['jsx-runtime'].rules,
-  },
-})
+   ```
+   git clone <repository-url>
+   cd sims-ppob
+   ```
+
+2. Install dependencies:
+
+   ```
+   npm install
+   ```
+
+### Development
+
+To start the development server:
+
+```
+npm run dev
+```
+
+### Build
+
+To create a production build:
+
+```
+npm run build
+```
+
+### Lint
+
+To check for linting issues:
+
+```
+npm run lint
+```
+
+### Preview
+
+To preview the production build:
+
+```
+npm run preview
 ```
